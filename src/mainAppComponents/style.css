@@ -1,0 +1,74 @@
+form {
+    display: flex;
+    justify-content: space-around;
+}
+
+h4 {
+    text-align: center;
+    color: rgb(200, 30, 30);
+    font-size: 1.5em;
+}
+
+.cubes {
+    margin-top: 1%;
+}
+
+.cubes-inside {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.animated-in {
+    animation-name: fadeIn;
+    animation-duration: 0.5s;
+}
+
+.item-drop-down:hover {
+    background-color: rgb(150,150,150);
+}
+
+.warriors {
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+}
+
+.warrior {
+    width: 100px;
+    height: 150px;
+    background-size: 100px 150px;
+    background-repeat: no-repeat;
+}
+
+.warrior:hover {
+    background-color: gray;
+    background-size: 150px 200px;
+    background-position: center top;
+}
+
+.big-card {
+    width: 200px;
+    height: 300px;
+    background-size: 200px 300px;
+    background-position: center top;
+}
+
+.big-card:hover {
+    background-size: 400px auto;
+}
+
+.selected-card {
+    display: flex;
+    justify-content: center;
+}
+
+.button {
+    display: flex;
+    justify-content: center;
+}
+
+@keyframes fadeIn {
+   0% {opacity: 0;}
+   100% {opacity: 1;}
+} 
