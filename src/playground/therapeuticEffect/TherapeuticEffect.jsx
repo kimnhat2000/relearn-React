@@ -1,4 +1,6 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
+
 import CubeRender from './CubeRender';
 import DropDown from './DropDown';
 
@@ -179,13 +181,6 @@ class TherapeuticEffect extends React.Component {
         return color;
     }
 
-    test = () => {
-        console.log(this.state.cubeArray)
-        let test = this.state.testNumber;
-        test = 1
-        console.log(test, this.state.testNumber)
-    }
-
     render() {
         const { cubeArray, cubeNumber, blinkingSpeed, blinkingCube, notice, cubeSize, dropdown, dropdownChosenItem } = this.state
         return (
@@ -225,7 +220,7 @@ class TherapeuticEffect extends React.Component {
 
                 <div>
                     <button>ok</button>
-                    <button onClick={this.test}>test</button>
+                    <Link to='/' style={{ textDecoration: 'none' }}><button>return to app hall</button></Link>
                 </div>  
            
 
