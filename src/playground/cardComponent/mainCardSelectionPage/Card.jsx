@@ -8,6 +8,7 @@ export const Card = ({ card, cardClick, showList }) => {
 
     const style = {
         backgroundImage: `${card.link}`,
+        backgroundColor: 'rgb(150,150,150)',
     }
 
     return(

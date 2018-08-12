@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 
 const AppGatheringHall = ({cards, card}) => {
     const click = () => {
-        console.log(cards, card)
+
     }
     return (
         <div>
@@ -12,6 +12,7 @@ const AppGatheringHall = ({cards, card}) => {
             <Link to='/luckGame' style={{ textDecoration: 'none' }}><button>luck game</button> </Link>
             <Link to='/cardDashBoard' style={{ textDecoration: 'none' }}><button>card dashboard</button></Link>
             <Link to='/flipingCards' style={{ textDecoration: 'none' }}><button>fliping cards game</button></Link>
+            <Link to='/D3js' style={{ textDecoration: 'none' }}><button>D3 learning</button></Link>
             <button onClick={click}>click</button>
         </div>
     )

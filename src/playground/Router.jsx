@@ -6,6 +6,7 @@ import LuckTestGame from './luckTestGame/LuckTestGame';
 import TherapeuticEffect from './therapeuticEffect/TherapeuticEffect';
 import CardDashBoard from './cardComponent/mainCardSelectionPage/CardDashBoard';
 import FlipingCards from './cardComponent/flipingCards/FlipingCards';
+import D3 from './D3jsLearningFiles/D3';
 
 
 const Router = () => (
@@ -16,6 +17,7 @@ const Router = () => (
             <Route path='/therapeuticEffects' component={TherapeuticEffect} />
             <Route path='/cardDashBoard' component={CardDashBoard} />
             <Route path='/flipingCards' component={FlipingCards} />
+            <Route path='/D3js' component={D3} />
         </Switch>
     </BrowserRouter>
 )
