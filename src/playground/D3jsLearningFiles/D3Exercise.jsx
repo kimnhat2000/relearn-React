@@ -72,8 +72,13 @@ class D3Execise extends React.Component{
                 .attr('y', (data) => (scaleY(data.revenue)))
                 .attr('width', scaleX.bandwidth)
                 .attr('height', (data) => (height - scaleY(data.revenue)))
-                .attr('fill', 'rgb(150, 150, 150)');
-        
+                .attr('fill', 'rgb(150, 150, 150)')
+                .append('text')
+                    .attr('class', 'value')
+                    .attr('x', 50)
+                    .attr('y', 50)
+                    .attr('font-size', '20px')
+
         // x label
         svg.append('text')
             .attr('class', 'x axis-label')

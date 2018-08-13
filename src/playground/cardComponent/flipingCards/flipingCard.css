@@ -1,0 +1,33 @@
+.big-card {
+    width: 250px;
+    height: 350px;
+    background-size: 100% auto;
+    background-repeat: no-repeat;
+    background-position: center top;
+}
+
+.fliping-card {
+    width: 150px;
+    height: 200px;
+    background-size: 100% auto;
+    background-color: rgb(150, 150, 150);
+    background-repeat: no-repeat;
+    background-position: center top;
+    margin: 20px;
+}
+
+.playing-card {
+    display: flex;
+    justify-content: center;
+}
+
+.big-card:hover {
+    background-size: 300 auto;
+    background-repeat: no-repeat;
+    background-position: center top;
+}
+
+.fliping-card:hover {
+    background-size: 150% auto;
+    background-color: rgb(200, 200, 200);
+}
