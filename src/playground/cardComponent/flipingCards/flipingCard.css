@@ -48,3 +48,13 @@
     display: flex;
     justify-content: center;
 }
+
+.money {
+    color: green
+}
+
+.input-label{
+    display: flex;
+    flex-direction: column;
+    margin: 0 10px;
+}

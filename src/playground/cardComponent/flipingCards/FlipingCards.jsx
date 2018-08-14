@@ -215,7 +215,10 @@ class FlipingCards extends React.Component{
                 <div className='flipping-card-menu'>
                     <div className='button'>
                         <button onClick={this.onRestart}>restart</button>
-                        <input type='number' value={moneyYouBet} onChange={this.onBet} />
+                        <div className='input-label'>
+                            <label>bet some money here</label>
+                            <input type='number' value={moneyYouBet} onChange={this.onBet} />
+                        </div>
                     </div>
                     <DropDownMenu
                         dropDownItems = {dropDownItems}
@@ -229,17 +232,22 @@ class FlipingCards extends React.Component{
                     playingCards = {playingCards}
                     onCardClick = {this.onCardClick}
                 />
-                 {playingCards.length === 0 &&
-                    <div className='button'>
-                        <button onClick={this.onPlay}>play</button>
-                    </div>
-                 }
-                <h4>{notice}</h4>
-                <div className='text-notice'>
-                    <h4>money: <NumberFormat value={moneyYouHave} displayType={'text'} thousandSeparator={true} prefix={'$ '} /> </h4>
-                    
-                    <h4>you bet: <NumberFormat value={moneyYouBet} displayType={'text'} thousandSeparator={true} prefix={'$ '} /></h4>
+                {playingCards.length === 0 &&
+                <div className='button'>
+                    <button onClick={this.onPlay}>play</button>
                 </div>
+                }
+
+                <h4>{notice}</h4>
+
+                {playingCards.length !== 0 &&
+                    <div className='text-notice'>
+                        <h4 className='money'>money: <NumberFormat value={moneyYouHave} displayType={'text'} thousandSeparator={true} prefix={'$ '} /> </h4>
+
+                        <h4>you bet: <NumberFormat value={moneyYouBet} displayType={'text'} thousandSeparator={true} prefix={'$ '} /></h4>
+                    </div>
+                }
+                
             </div>
         )
     }
