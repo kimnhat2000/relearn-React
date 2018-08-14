@@ -4,16 +4,26 @@
     background-size: 100% auto;
     background-repeat: no-repeat;
     background-position: center top;
+    border-radius: 50%;
+    box-shadow: 7px 9px 30px -3px rgba(0,0,0,0.75);
+    cursor: pointer;
 }
 
 .fliping-card {
     width: 150px;
     height: 200px;
-    background-size: 100% auto;
+    background-size: 100% 100%;
     background-color: rgb(150, 150, 150);
     background-repeat: no-repeat;
     background-position: center top;
     margin: 20px;
+    box-shadow: 5px 5px 20px -3px rgba(0,0,0,0.75);
+    border-radius: 5%;
+    border:10px outset rgb(200, 200, 200);
+    border-width: 5px;
+    cursor: pointer;
+    perspective: 600px;
+    position: relative;
 }
 
 .playing-card {
@@ -27,7 +37,14 @@
     background-position: center top;
 }
 
-.fliping-card:hover {
-    background-size: 150% auto;
-    background-color: rgb(200, 200, 200);
+.flipping-card-menu {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+}
+
+.text-notice {
+    display: flex;
+    justify-content: center;
 }
