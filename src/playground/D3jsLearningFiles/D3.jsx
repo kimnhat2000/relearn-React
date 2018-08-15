@@ -3,6 +3,7 @@ import * as d3 from "d3";
 import { Link } from 'react-router-dom';
 
 import D3Execise from './D3Exercise';
+import D3Exercise2 from './D3Exercise2';
 
 class D3 extends React.Component{
 
@@ -109,6 +110,7 @@ class D3 extends React.Component{
                 <Link to='/' style={{ textDecoration: 'none' }}><button>return to app hall</button></Link>
                 <div className='exercise1'></div>
                 <D3Execise/>
+                <D3Exercise2/>
             </div>
         )
     }

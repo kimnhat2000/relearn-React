@@ -131,7 +131,8 @@ class FlipingCards extends React.Component{
     }
 
     onCardClick = (card) => {
-        const { moneyYouBet, itemClicked } = this.state
+        const { itemClicked } = this.state
+        const moneyYouBet = this.state.moneyYouBet
         let moneyYouHave = this.state.moneyYouHave
 
         if(moneyYouBet < Math.round(moneyYouHave * 30 / 100)) {
@@ -139,7 +140,12 @@ class FlipingCards extends React.Component{
             return;
         }
 
-        if(this.state.moneyYouHave === 0) {
+        if (moneyYouBet > moneyYouHave) {
+            this.setState({ notice: `you can't bet more money than you have`, moneyYouBet: moneyYouHave });
+            return;
+        }
+
+        if(this.state.moneyYouHave <= 0) {
             this.setState({ notice: 'you lose the game'});
             return; 
         }
@@ -154,7 +160,7 @@ class FlipingCards extends React.Component{
             moneyYouHave = moneyYouHave - moneyYouBet;
             const playingCards = this.state.playingCards.map(c => ({ ...c, click: true }));
             this.setState({ notice: 'wrong', playingCards, noClick: true, moneyYouHave })
-            if (moneyYouHave === 0) {
+            if (moneyYouHave <= 0) {
                 this.setState({ notice: 'you lose the game', moneyYouHave });
                 return;
             } else {

@@ -11,12 +11,26 @@ class D3Execise extends React.Component{
         // import data
         d3.json('/data/revenues.json').then((data) => {
             // turn string to number
-            data.forEach((d) => (
-                d.revenue = +d.revenue
-            ))
+            data.forEach((d) => {
+                d.revenue = +d.revenue;
+                d.profit = +d.profit
+            })
+            d3.interval(() => {
+                const newData = flag ? data : data.slice(1);
+                update(newData);
+                flag = !flag;
+            }, 1000);
+
+            update(data); // this is to call update function so axes will be render immediatley without waiting for 1 second
+
+        }).catch((error) => {
+            console.log(error);
+        });
+
+        let flag = true;
 
         // set size and margin of the canvas
-        const margin = { left: 150, right: 10, top:10, bottom:50 };
+        const margin = { left: 150, right: 10, top: 10, bottom: 50 };
         const width = 600 - margin.left - margin.right;
         const height = 400 - margin.top - margin.bottom;
 
@@ -28,56 +42,25 @@ class D3Execise extends React.Component{
                 .append('g')
                     .attr('transform', `translate(${margin.left}, ${margin.top})`)
 
+
         // X scaling
-        const xDomainAxisData = data.map((d) => (d.month));
         const scaleX = d3.scaleBand()
-            .domain(xDomainAxisData)
-            .range([0,width])
+            .range([0, width])
             .paddingInner(0.3)
             .paddingOuter(0.3);
 
         // Y scaling
-            // max data number
-        const maxYValue = d3.max(data, (data) => (data.revenue));
         const scaleY = d3.scaleLinear()
-            .domain([0, maxYValue])
             .range([height, 0]);
 
-        // draw axes and ticks
-        // create X axis
-        const XAxis = d3.axisBottom(scaleX);
-        svg.append('g')
+        // draw X axis group
+        const XAxisGroup = svg.append('g')
             .attr('class', 'x-axis')
             .attr('transform', `translate(0, ${height})`)
-            .call(XAxis)
-            .selectAll('text')
-                .attr('y', '10')
-                .attr('x', '0')
-                .attr('text-anchor', 'middle');
-        // create Y axis
-        const YAxis = d3.axisLeft(scaleY)
-            .tickFormat((d) => ('$' + d))
-        svg.append('g')
+
+        // draw Y axis group
+        const YAxisGroup = svg.append('g')
             .attr('class', 'y-axis')
-            .call(YAxis);
-
-        // input data to all rect
-        const rect = svg.selectAll('rect')
-            .data(data);
-
-        // draw all rects
-        rect.enter()
-            .append('rect')
-                .attr('x', (data) => (scaleX(data.month)))
-                .attr('y', (data) => (scaleY(data.revenue)))
-                .attr('width', scaleX.bandwidth)
-                .attr('height', (data) => (height - scaleY(data.revenue)))
-                .attr('fill', 'rgb(150, 150, 150)')
-                .append('text')
-                    .attr('class', 'value')
-                    .attr('x', 50)
-                    .attr('y', 50)
-                    .attr('font-size', '20px')
 
         // x label
         svg.append('text')
@@ -89,19 +72,67 @@ class D3Execise extends React.Component{
             .text("Month");
 
         //  y label
-        svg.append('text')
+        const YLabel = svg.append('text')
             .attr('class', 'y axis-0label')
             .attr('x', -(height / 2))
             .attr('y', -60)
             .attr('font-size', '20px')
             .attr('text-anchor', 'middle')
             .attr('transform', 'rotate(-90)')
-            .text("revenue");
+            .text("revenue");        
 
-        }).catch((error) => {
-            console.log(error);
-        });
+        const update = (data) => {
+            const tr = d3.transition().duration(750) // duration time should alwaus lower than update time
+            const value = flag ? 'revenue' : 'profit';
+            // X scaling data provide
+            const xDomainAxisData = data.map((d) => (d.month));
+            // max data number
+            const maxYValue = d3.max(data, (data) => (data[value]));
 
+            scaleX.domain(xDomainAxisData)
+            scaleY.domain([0, maxYValue])
+
+            // draw axes and ticks
+            // create X axis
+            const XAxis = d3.axisBottom(scaleX);
+            XAxisGroup.transition(tr).call(XAxis); // call transition here to see X move
+            // create Y axis
+            const YAxis = d3.axisLeft(scaleY)
+                .tickFormat((d) => ('$' + d))
+            YAxisGroup.transition(tr).call(YAxis); // call transition here to see Y move
+
+            // DATA JOIN
+            // input data to all rect, at thi point our enter array is full and ready
+            const rect = svg.selectAll('rect')
+                .data(data, (d) => (d.month));
+            
+            // before EXIT, remove all current elemtents on screen (before drawing update, we must remove whatever on screen first so they will not overlapse)
+            rect.exit()
+                .attr('fill', 'red')
+                .transition(tr)
+                    .attr('y', scaleY(0))
+                    .attr('height', 0)
+                    .remove();
+
+            // finally we can use ENTER enter() to draw our rects
+            // draw all rects
+                rect.enter(d3.transition().duration(500))
+                .append('rect')
+                    .attr('x', (data) => (scaleX(data.month)))
+                    .attr('y', scaleY(0)) //start at the bottm
+                    .attr('width', scaleX.bandwidth)
+                    .attr('height', 0) //with 0 height
+                    .attr('fill', 'rgb(150, 150, 150)')
+                    .merge(rect) // merge UPDATE and ENTER
+                    .transition(tr)
+                        .attr('y', (data) => (scaleY(data[value])))
+                        .attr('height', (data) => (height - scaleY(data[value])))
+                        .attr('x', (data) => (scaleX(data.month)))
+                        .attr('width', scaleX.bandwidth)
+
+            const label = flag ? 'revenue' : 'profit';
+            YLabel.text(label);
+        }
     }
 
     render(){
