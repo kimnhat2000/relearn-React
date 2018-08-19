@@ -128,7 +128,7 @@ class D3Execise extends React.Component{
                         .attr('y', (data) => (scaleY(data[value])))
                         .attr('height', (data) => (height - scaleY(data[value])))
                         .attr('x', (data) => (scaleX(data.month)))
-                        .attr('width', scaleX.bandwidth)
+                        .attr('width', scaleX.bandwidth)()
 
             const label = flag ? 'revenue' : 'profit';
             YLabel.text(label);

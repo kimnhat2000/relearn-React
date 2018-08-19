@@ -1,17 +1,17 @@
 import React from 'react';
 import * as d3 from "d3";
-import { Link } from 'react-router-dom';
 
-import D3Execise from './D3Exercise';
-import D3Exercise2 from './D3Exercise2';
+class D3FirstChart extends React.Component{
 
-class D3 extends React.Component{
+    componentDidUpdate = () => {
+        this.state.showChart && this.startD3()
+    }
 
-    componentDidMount = () => {
-        this.starD3();
+    onShowChart = () => {
+        this.setState({ showChart: !this.state.showChart });
     };
 
-    starD3 = () => {
+    startD3 = () => {
         // input data
         d3.json('/data/buildings.json').then((data) => {
             data.forEach((d) => {
@@ -55,14 +55,14 @@ class D3 extends React.Component{
             // const minYValue = d3.min(data, (data) => (data.height))
             const maxYValue = d3.max(data, (data) => (data.height))
 
-            // horizontal scaling
+            // X horizontal scaling
             const scaleX = d3.scaleBand()
                 .domain(scaleBrandDomain)
                 .range([0, width])
                 .paddingInner(0.3)
                 .paddingOuter(0.3)
 
-            //  vertical scaling
+            //  Y vertical scaling
             const scaleY = d3.scaleLinear()
                 .domain([0, maxYValue])
                 .range([height, 0])
@@ -106,14 +106,10 @@ class D3 extends React.Component{
     }
     render(){
         return(
-            <div className='button'>
-                <Link to='/' style={{ textDecoration: 'none' }}><button>return to app hall</button></Link>
-                <div className='exercise1'></div>
-                <D3Execise/>
-                <D3Exercise2/>
-            </div>
+            <div className='exercise1'></div>
+
         )
     }
 }
 
-export default D3;
+export default D3FirstChart;

@@ -2,50 +2,11 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import NumberFormat from 'react-number-format';
+import $ from 'jquery';
 
 import './flipingCard.css';
 import { shuffleArray } from '../../tools/tools';
-
-// drop down menu
-class DropDownMenu extends React.Component{
-    constructor(props) {
-        super();
-        this.state = {
-            showItems: false,
-            buttonContain: 'add more cards',
-        }
-
-    }
-
-    onShowCards = () => {
-        this.setState({ showItems: !this.state.showItems })
-
-    }
-
-    onChooseCard = (item) => () => {
-        this.props.clickedItems(item);
-        this.setState({ showItems: false, buttonContain: `${item.placeholder}` })
-    }
-
-    render(){
-        const { dropDownItems } = this.props
-            const dropDown = dropDownItems.map((item, index) => (
-                <div key={index} className='item-drop-down' onClick={this.onChooseCard(item)}>
-                    {item.placeholder}
-                </div>
-            ));
-        return(
-            <div>
-                <button onClick={this.onShowCards}>{this.state.buttonContain}</button>
-                {this.state.showItems &&
-                    <div>
-                        {dropDown}
-                    </div>
-                }
-            </div>
-        )
-    }
-}
+import FlipingCardWiningRate from './flipingCardWiningRate';
 
 // cards render
 const Card = ({ card, playingCards, onCardClick }) => {
@@ -91,13 +52,12 @@ class FlipingCards extends React.Component{
             buttonName: 'play',
             moneyYouHave: 5,
             moneyYouBet: 0,
-            dropDownItems: [
-                {cardsNumber: 2, placeholder: '2 cards (bet money x 2)', multiply: 2, },
-                {cardsNumber: 3, placeholder: '3 cards (bet money x 4)', multiply: 4, },
-                {cardsNumber: 4, placeholder: '4 cards (bet money x 15)', multiply: 15, },
-                {cardsNumber: 5, placeholder: '5 cards (bet money x 30)', multiply: 30, },
-                {cardsNumber: 6, placeholder: '6 cards (bet money x 60)', multiply: 60, },
-            ],
+            winLooseRatio: [
+                { cardsNumber: 2, wins: 0, lose: 0 }, 
+                { cardsNumber: 3, wins: 0, lose: 0 }, 
+                { cardsNumber: 4, wins: 0, lose: 0 }, 
+                { cardsNumber: 5, wins: 0, lose: 0 }, 
+                { cardsNumber: 6, wins: 0, lose: 0 }],
             itemClicked: { cardsNumber: 2, placeholder: '2 cards (bet money x 2)', multiply: 2 },
             totalCardsInData: 15,
             emptyCard: ''
@@ -107,13 +67,13 @@ class FlipingCards extends React.Component{
     componentDidMount = () => {
         const propsCard = { ...this.props.card, click: false };
         const randomNum = Math.floor(Math.random()*this.state.totalCardsInData)
-        const randomCard = { id: {randomNum}, name: 'empty', link: `url(/Pictures/warriors/warrior-${randomNum+1}.jpg)`, click: false }
+        const randomCard = { id: randomNum, name: 'empty', link: `url(/Pictures/warriors/warrior-${randomNum+1}.jpg)`, click: false }
         let card = this.props.card ? propsCard : randomCard
         this.setState({ card })
     }
 
     componentDidUpdate = () => {
-
+        this.cardsNumberSelect();
     }
 
     onPlay = () => {
@@ -131,7 +91,7 @@ class FlipingCards extends React.Component{
     }
 
     onCardClick = (card) => {
-        const { itemClicked } = this.state
+        const { numberOfPlayingCards } = this.state
         const moneyYouBet = this.state.moneyYouBet
         let moneyYouHave = this.state.moneyYouHave
 
@@ -152,14 +112,16 @@ class FlipingCards extends React.Component{
         if(this.state.noClick) {
             return;
         } else if (card.id === this.state.card.id) {
+            const winLooseRatio = this.state.winLooseRatio.map(c => c.cardsNumber === numberOfPlayingCards ? c = {...c, wins:c.wins+1} : c);
             const playingCards = this.state.playingCards.map(c => c.id === card.id ? { ...c, click: true } : c);
-            this.setState({ notice: 'correct', playingCards, noClick: true, moneyYouHave: moneyYouHave - moneyYouBet + moneyYouBet*itemClicked.multiply  })
+            this.setState({ notice: 'correct', playingCards, noClick: true, moneyYouHave: moneyYouHave - moneyYouBet + (moneyYouBet * numberOfPlayingCards*(numberOfPlayingCards-1)), winLooseRatio })
             this.stopClick();
             return;
         } else {
             moneyYouHave = moneyYouHave - moneyYouBet;
+            const winLooseRatio = this.state.winLooseRatio.map(c => c.cardsNumber === numberOfPlayingCards ? c = { ...c, lose:c.lose +1 } : c);
             const playingCards = this.state.playingCards.map(c => ({ ...c, click: true }));
-            this.setState({ notice: 'wrong', playingCards, noClick: true, moneyYouHave })
+            this.setState({ notice: 'wrong', playingCards, noClick: true, moneyYouHave, winLooseRatio })
             if (moneyYouHave <= 0) {
                 this.setState({ notice: 'you lose the game', moneyYouHave });
                 return;
@@ -190,15 +152,16 @@ class FlipingCards extends React.Component{
         }
     }
 
-    clickedItems = (item) => {
-        const itemClicked = item;
-        const numberOfPlayingCards = item.cardsNumber;
-        const { emptyCard, card } = this.state
-        const emptyCards = Array(numberOfPlayingCards - 1).fill().map(c => (c={ ...emptyCard }))
-        const allCards = [...emptyCards, card];
-        const playingCards = shuffleArray(allCards);
-        this.setState({ playingCards, numberOfPlayingCards, continue: false, noClick: false, notice: '', itemClicked });
-        console.log(playingCards)
+    cardsNumberSelect = () => {
+        $('.number-of-cards').change(() => {
+            const itemClicked = +$('.number-of-cards').val();
+            const numberOfPlayingCards = itemClicked;
+            const { emptyCard, card } = this.state
+            const emptyCards = Array(numberOfPlayingCards - 1).fill().map(c => (c = { ...emptyCard }))
+            const allCards = [...emptyCards, card];
+            const playingCards = shuffleArray(allCards);
+            this.setState({ playingCards, numberOfPlayingCards, continue: false, noClick: false, notice: '', itemClicked });        
+        })
     }
 
     stopClick = () => {
@@ -209,7 +172,30 @@ class FlipingCards extends React.Component{
     }
 
     render(){
-        const { card, playingCards, notice, moneyYouBet, moneyYouHave, dropDownItems } = this.state
+        const { card, playingCards, notice, moneyYouBet, moneyYouHave, winLooseRatio } = this.state
+        const winLoseRate = 
+            <table>
+                <tbody>
+                    <tr>
+                        <th>cards</th>
+                        <th>wins</th>
+                        <th>loses</th>
+                        <th>rate (%)</th>
+                    </tr>
+                </tbody>
+                {winLooseRatio.map((r, i) => (
+                <tbody key={i}>
+                <tr>
+                    <td>{r.cardsNumber}</td>
+                    <td>{r.wins}</td>
+                    <td>{r.lose}</td>
+                    <td>{r.wins + r.lose !== 0 ? Math.round(r.wins / (r.wins + r.lose) * 100) : 0}</td>
+                </tr>
+                </tbody> 
+         
+                ))}
+            </table>
+
         return (
             <div>
                 <div>
@@ -226,11 +212,24 @@ class FlipingCards extends React.Component{
                             <input type='number' value={moneyYouBet} onChange={this.onBet} />
                         </div>
                     </div>
-                    <DropDownMenu
-                        dropDownItems = {dropDownItems}
-                        clickedItems = {this.clickedItems}
-                    />
+                    <div>
+                        <select className='number-of-cards'>
+                            <option value='2'>2 cards (bet money x 2)</option>
+                            <option value='3'>3 cards (bet money x 6)</option>
+                            <option value='4'>4 cards (bet money x 12)</option>
+                            <option value='5'>5 cards (bet money x 20)</option>
+                            <option value='6'>6 cards (bet money x 30)</option>
+                        </select>
+                    </div>
                 </div>
+                }
+
+                {playingCards.length !== 0 &&
+                    <div className='text-notice'>
+                        <h4 className='money'>money: <NumberFormat value={moneyYouHave} displayType={'text'} thousandSeparator={true} prefix={'$ '} /> </h4>
+
+                        <h4>you bet: <NumberFormat value={moneyYouBet} displayType={'text'} thousandSeparator={true} prefix={'$ '} /></h4>
+                    </div>
                 }
 
                 <Card
@@ -245,14 +244,16 @@ class FlipingCards extends React.Component{
                 }
 
                 <h4>{notice}</h4>
-
-                {playingCards.length !== 0 &&
-                    <div className='text-notice'>
-                        <h4 className='money'>money: <NumberFormat value={moneyYouHave} displayType={'text'} thousandSeparator={true} prefix={'$ '} /> </h4>
-
-                        <h4>you bet: <NumberFormat value={moneyYouBet} displayType={'text'} thousandSeparator={true} prefix={'$ '} /></h4>
+                
+                <div className='statistic'>
+                    {winLoseRate}
+                    <div>
+                        <FlipingCardWiningRate
+                            data={this.state.winLooseRatio}
+                        />
                     </div>
-                }
+
+                </div>
                 
             </div>
         )
